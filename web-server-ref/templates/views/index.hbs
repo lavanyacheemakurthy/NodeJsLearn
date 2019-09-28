@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Weather</title>
+    <link rel="icon" href="/img/weather.png" />
+    <link rel="stylesheet" href="/css/styles.css">
+
+</head>
+
+<body>
+    <div class="main-content">
+        {{>header}}
+        <p>Use this site to get weather</p>
+        <form>
+            <input placeholder="location">
+            <button>Search</button>
+        </form>
+        <p id= "message-one"></p>
+        <p id = "message-two"></p>
+    </div>
+    <!--calling partials with just file name, 
+        all input arguments to this pge will be accessible for partial too.
+        Removing <h1>{{title}}</h1>
+        -->
+    {{!-- <p>Created by {{name}}</p> --}}
+    {{>footer}}
+
+    <script src="/js/app.js"></script>
+</body>
+
+</html>

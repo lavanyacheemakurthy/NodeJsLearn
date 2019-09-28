@@ -1,0 +1,154 @@
+create junction every time u switch node versions from CMD as admin:
+>mklink /j "%NVM_SYMLINK%" "%NVM_HOME%\v10.16.3"
+
+$nvm use 7.4.0 ( GIT Bash)
+>mklink /j "%NVM_SYMLINK%" "%NVM_HOME%\v7.4.0"
+
+
+web server with (weather app files copy) lauched at:
+
+https://lavanyachs-weather-application.herokuapp.com/
+
+
+To connect to C:\Users\cheemaks\Learnings\mongodb-data-practice datafiles:
+[terminal type : mongod]
+PS C:\Users\cheemaks\Learnings\NodeJs> 
+/users/cheemaks/Learnings/MongoDB/Server/3.2/bin/mongod.exe --dbpath=/users/cheemaks/Learnings/mongodb-data-practice
+
+
+>node mongodb.js
+>node src/db/mongoose.js
+
+REST API:
+---------
+
+Representational state transfer
+Application programming interface
+
+API - set of tools to build set of applciations
+
+RSET - allows clients like browsers to access and resource something using predefined operations.
+Represenations of data - by storing data in db.
+And we use CRUD operations.
+State transfer - Each request from client contains every thing needed to process request(including authentication). 
+eg. 
+client -> sends - GET /tasks/a7eae to Server
+Server -> responds 200 - JSON response
+
+        client                                          Server
+POST /tasks - JSON request----------------------->Identity confirmed. Task created.
+<-----------------------------------------------201 - JSON respose that task created.
+
+The Task Resource: (CRUD)
+Create                      POST   /tasks
+Read                        GET    /tasks       --when we are looking for multiple 
+                            GET    /tasks/:id    -- when only one is needed to be find.
+Update                      PATCH  /tasks.:id
+Delete                      DELETE /tasks/:id
+
+client ----->Server
+           Request Object:
+            ----------------
+            POST /tasks HTTP/1.1 (TYpe of request)
+            Accept : application/json (Header for request)
+            Connection : keep-Alive - saying keep connection open as we want to connect for other requests(Header)
+            Authorization: Lav uierhvjnkjk(Header)
+
+            {"description":"Lav new description"}(body)
+
+Server ------->Client
+            Response Object:
+            ----------------
+            HTTP/1.1 201 created (status code)
+            Date : sun,28 jul 2019 15:43:44 IST
+            Server:Express
+            Content-Type:application/json
+
+            {"_id":"sfigvdnfhghergndvno4wjiomw","description" : "Lav new description","completed":false}
+
+
+Install postman.
+GET 
+https://lavanyachs-weather-application.herokuapp.com/weather?address=hyderabad
+
+Lets restructure.
+From now, in task-manager app,
+insted of mongodb.js , we will use src/index.js
+Install nodemon and Express
+Update scripts in package.json .Nodemon can be used only in development env.
+
+In mongooese we had a model till now of Users.
+Cut it and paste it in src/models/user.js
+do imports as needed in new user.js
+Add an middleware line in index.js like
+app.use(userRouter)
+where const userRouter=require('./models/user')
+
+Sperate all routers into rotures folder.
+Use BcryptJs for hasings 
+Use statistics for model to use mongoose model.
+Hasing is used to store hashed password insted of string in db as anyone can see password.
+This hasing has to be done all collection documents , so define it using userSchema.statistics.METHOD()
+use JsonWebToken to get sign's for user login pr signup
+use methods on mongoose model to use methods on instances of collection.
+For login and sign up ,authentication is needed for user. SO when ever user is created a signature key is used to generate token and token is sent back to user.
+Every tim user logs in, he has to pass signature key to authenticate self.
+This token is used to provide Authorization to user.
+User will be able to view records inserted only by him.
+User can do DML's on data he created.
+To use statisticsat or methods on mongoose model using "MONGOOSE MIDDLEWARE", we have to place collection schema seperatly.
+And for finding a user use other methods than built-in as we need customizations.
+By using Mongoose , MIDDLEWARE will be available just separate schema and others to use MIDDLEARE functionality.
+
+With middleware we can customise our server/app behaviour.
+Now we have login and sign up calls with token setup.
+Lets see "EXPRESS MIDDLEARE" support.
+To use aa middleware support provided by EXPRESS before all app.use(<ROUTERS>) statements write a app.use with functions defined in line which will allow 3 arguments request,response,next
+This line will have all details what a router call has and we can do intermediate operations.
+That is when some deployement is going on , we can stop givving access to aa get calls.
+next() in this function is used to say express to continue execution of going to route handle to perform requested operation.
+
+Without middleware--------->New request->run route handler
+with middelware-------------->New request->do something/log for confirmation/stop going ahead to handler->run route handle
+
+When we set up middelware functions, we dont have to do it for every single router instead
+we can target individual ones like router.THis can be used for authentication
+
+in index.js
+app.use((req,res,next)=>{
+        //this will run in between request comming to server and route handler running.This will have acees to same informate as router has access to.
+        //3 arguments - next is special
+
+})
+app.use((req,res,next) => {
+    res.status(503).send('Under Maintenance. Try after sometime')
+})
+Accepting authentication tokens:
+---------
+As in application its a good practice to place all middleware functions in seperate files
+src>middleware>auth.js
+But this middleware should get executed only when user is logging in or creating requests but not for all calls
+So set middleware function for individual router
+
+As per our code, if we are logging in multiple times, multiple tokens will be keep on concatinating to user.token object.
+Take latest token , go to GET Users request in postman and open headers and add a
+ key : 'Authorization' with value :'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZDc0ZDg2NzExOWY0NjQ1MDBkN2UzMTkiLCJpYXQiOjE1Njc5Mzk1ODJ9.d4IWwa58kwMZHF5Pae7cXgzjldB6kNqDuSoQkhm7Nw0'
+ This is called a bearer token in which the client provides the token with the request they are trying to perform.
+This is what client is supposed to do to get authenticated
+Lets see how to access it in middle ware function in auth.js
+
+
+postman environments:
+{{url}}
+
+
+logout and logoutAll.
+
+till no we are sending back all user data as soon user logs in.
+But we shouldnt show somethings like passwords.
+use getPublicProfile()
+Change as toJSON()
+
+Now rewrite delete and update user by using auth so that deletion and updation can happen only for the logged in user and removing access to update / delete other users.
+
+
