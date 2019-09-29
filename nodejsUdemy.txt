@@ -139,7 +139,15 @@ Lets see how to access it in middle ware function in auth.js
 
 
 postman environments:
-{{url}}
+{{url}} , {{authToken}};
+Set url in environmental variables.
+And in create user task under tests tab:
+if(pm.response.code===201){
+    pm.environment.set('authToken',pm.response.json().token)
+}
+then authToken will Automatically set with token of newly created user.
+Copy same part to Login request, so that authToken will always be updated with token of current logged in user
+Authorization : Type Bearier token
 
 
 logout and logoutAll.
@@ -150,5 +158,95 @@ use getPublicProfile()
 Change as toJSON()
 
 Now rewrite delete and update user by using auth so that deletion and updation can happen only for the logged in user and removing access to update / delete other users.
+This above step is setting authentication for all user endpoints/routes
+
+User/Task Relationship:
+----------
+
+This can be done in 2 ways:
+1.The user cn store ID's of tasks that he/she created.
+2.The individual task can hold ID of user who created it.
+
+The second approch is what we are going to follow
+
+The change we are going to do is ,  in task model we will set up another property which can hold ID of user.
+And the type of this is SchemaTypes.ObjectID.
+owner: {
+        type: mongoose.SchemaTypes.ObjectId,
+        required:true
+        
+}
+NOw drop all db in mongoose.
+As this is new schema.
+
+Now create a very first user:
+{
+	"name":"Lavanya1",
+	"email":"lavanya1@test.com",
+	"password":"lavanya@1",
+	"age":23
+}
+We will use this user for creating very first task with owner
+
+Load Auth into task router as routes are not yet authenticated
+Now import auth into tasks router
+Make POST to be authenticated endpointsconst task = new Task({
+        ...req.body,
+        owner: req.user._id,
+    });
+Now create user in postmand and create a task.
+Automatically the created user is assigned as owner of task because this user is just authenticated.
+
+Now for below in index.js:
+const Task = require('./models/task')
+const main = async () => {
+    const task = await Task.findById('5d90512188298c2f7cd2387d');
+    console.log(task.owner);
+    
+}
+main()
+We need owner name instead of ID.
+We can take ID and find name from User model.
+But with moongoose there is way to set relation b/w two models using helper functions.
+To know this add ref in owner property of task model
+owner: {
+        type: mongoose.SchemaTypes.ObjectId,
+        required:true,
+        ref:'User'
+    }
 
 
+userSchema.virtual('tasks', {
+    ref: 'Task',
+    localField: '_id', //id of user - this is value of current model used as value in foreignField/owner in Task model
+    foreignField:'owner' //Name of field on Task that is going to set the relationship b/w 2 models
+})
+
+const Task = require('./models/task')
+const User = require('./models/user')
+const main = async () => {
+    //const task = await Task.findById('5d90512188298c2f7cd2387d');
+    //console.log(task.owner); // this will print ID
+    //await task.populate('owner').execPopulate();
+    //this line is going to search User model and find user with the id given in owner.Insead of givinf ID we will get entire profile of user
+    //console.log(task.owner); // this will print owner profile taken from User , an Object of user that created task
+    //we have taken task and found user
+    //Lets find it reverse - find tasks assocaiated with User
+    //copy Owner ID from one task
+    const user = await User.findById('5d90505288298c2f7cd23879');
+    //console.log(user.tasks); //But we didnt keep this variable. //Undefined
+    //Lets keep a relation from Users to tokens.
+    //Keep a virtual property.Its a relation b/w 2 entities.It wont be stored in DB.
+    //Set it User model
+    
+    //Now populate tasks
+    await user.populate('tasks').execPopulate(); 
+    console.log(user.tasks); 
+    /*[ { completed: false,
+    _id: 5d9050d388298c2f7cd2387b,
+    description: 'Learning Async await',
+    owner: 5d90505288298c2f7cd23879,
+    __v: 0 } ] */
+    
+}
+main()
