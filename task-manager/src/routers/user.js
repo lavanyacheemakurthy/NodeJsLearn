@@ -204,6 +204,7 @@ router.post('/users/login', async (req, res) => {
     }
 })
 
+//logout
 router.post('/users/logout', auth, async(req, res) =>{
     try {
         req.user.tokens = req.user.tokens.filter((token) => {
@@ -217,6 +218,7 @@ router.post('/users/logout', auth, async(req, res) =>{
         res.status(500).send("Logging out failed.");
     }
 })
+//logoutAll
 router.post('/users/logoutAll', auth, async (req, res) => {
     try {
         req.user.tokens = [];

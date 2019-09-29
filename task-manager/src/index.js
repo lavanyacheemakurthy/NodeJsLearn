@@ -355,11 +355,41 @@ Body:
 //     }
 // })
 
-const pe = {
-    name : 'Light'
-}
-pe.toJSON = function () {
-    return {}
-}
-console.log(JSON.stringify(pe));
+// const pe = {
+//     name : 'Light'
+// }
+// pe.toJSON = function () {
+//     return {}
+// }
+// console.log(JSON.stringify(pe));
 
+const Task = require('./models/task')
+const User = require('./models/user')
+const main = async () => {
+    //const task = await Task.findById('5d90512188298c2f7cd2387d');
+    //console.log(task.owner); // this will print ID
+    //await task.populate('owner').execPopulate();
+    //this line is going to search User model and find user with the id given in owner.Insead of givinf ID we will get entire profile of user
+    //console.log(task.owner); // this will print owner profile taken from User , an Object of user that created task
+    //we have taken task and found user
+    //Lets find it reverse - find tasks assocaiated with User
+    //copy Owner ID from one task
+   // const user = await User.findById('5d90505288298c2f7cd23879');
+   const user = await User.findById('5d904e8e56082e374830500c');
+    //console.log(user.tasks); //But we didnt keep this variable. //Undefined
+    //Lets keep a relation from Users to tokens.
+    //Keep a virtual property.Its a relation b/w 2 entities.It wont be stored in DB.
+    //Set it User model
+    
+    //Now populate tasks
+    await user.populate('tasks').execPopulate(); 
+    console.log(user.tasks); //this wont be stored in DB but created virtually
+    //prints all tasks assocaited with User
+    /*[ { completed: false,
+    _id: 5d9050d388298c2f7cd2387b,
+    description: 'Learning Async await',
+    owner: 5d90505288298c2f7cd23879,
+    __v: 0 } ] */
+    
+}
+main()

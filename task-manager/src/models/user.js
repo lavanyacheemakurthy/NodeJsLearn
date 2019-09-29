@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
-const jwt =require('jsonwebtoken')
+const jwt = require('jsonwebtoken')
+const Task = require('./task')
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -47,6 +48,17 @@ const userSchema = new mongoose.Schema({
         }
     }]
 })
+
+//this is setting up virtual relation from User to Task to find what are all the tasks associated with particular user.
+//this is just for mongoose to find relation, who owns what 
+//Set up 2 other fields , local field  and foreign field
+userSchema.virtual('tasks', {
+    ref: 'Task',
+    localField: '_id', //id of user - this is value of current model used as value in foreignField/owner in Task model
+    foreignField:'owner' //Name of field on Task that is going to set the relationship b/w 2 models
+})
+
+
 //to use mongoose middleware to say when any action has to be triggered, when creating a model we have to make little changes.
 //2nd object is actually schema. So use a seperate schema object to create it and apply middleware operation PRE
 userSchema.pre('save', async function (next) { // using moongose middleware
@@ -59,6 +71,14 @@ userSchema.pre('save', async function (next) { // using moongose middleware
     //If next() is not called, app will hang here.
     
 })
+
+//delete user tasks when user is removed
+userSchema.pre('remove', async function (next) {
+    const user = this
+        await Task.deleteMany({ owner: user._id }) 
+    next();
+})
+
 
 //userSchema.methods.getPublicProfile = function () {
     userSchema.methods.toJSON = function () {
