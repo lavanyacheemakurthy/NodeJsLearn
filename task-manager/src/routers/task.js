@@ -38,16 +38,80 @@ router.post('/tasks',auth, async (req, res) => {
 //     }
 // })
 //Lets authenticate GET by populating only tasks associated with user curently logged in.
-router.get('/tasks', auth,async (req, res) => {
+// router.get('/tasks', auth,async (req, res) => {
+//     try {
+//         //const tasks = await Task.find({owner:req.user._id})
+//         //THis will work.Lets try other way
+//          await req.user.populate('tasks').execPopulate();
+//         res.send(req.user.tasks);
+//     } catch (e) {
+//         res.status(500).send(e)
+//     }
+// })
+//lets use special options
+//GET /tasks?completed=true
+//Below has to work fro true , false and if nothing is given.So use req.query. Req.query.completed will return true or false as strings
+// router.get('/tasks', auth, async (req, res) => {
+//     const match = {};
+//     if (req.query.completed) {
+        
+//         match.completed = req.query.completed ==='true'
+//     }
+//     try {
+//         await req.user.populate({
+//             path: 'tasks',
+//             match
+//           }).execPopulate();
+//         res.send(req.user.tasks);
+//     } catch (e) {
+//         res.status(500).send(e)
+//     }
+// })
+//Now above will work for
+//{ { url } } /tasks?completed=false
+//{ { url } } /tasks?completed=true
+//{ { url } } /tasks
+//pagination
+//limit skip
+//GET /tasks?limit=10&skip=0 - we will get results of first page
+//GET /tasks?limit=10&skip=10 - We wil get 2 nd page results.
+//In mongoose we use options in populate.
+//GET /tasks?sortyBy=createdAt:desc
+//{{url}}/tasks?sortBy=createdAt:desc
+router.get('/tasks', auth, async (req, res) => {
+    const match = {};
+    const sort = {};
+    if (req.query.completed) {        
+        match.completed = req.query.completed ==='true'
+    }
+    if (req.query.sortBy) {
+        const parts = req.query.sortBy.split(':')
+        sort[parts[0]] = parts[1]==="desc" ? -1 :1
+    }
     try {
-        //const tasks = await Task.find({owner:req.user._id})
-        //THis will work.Lets try other way
-         await req.user.populate('tasks').execPopulate();
+        await req.user.populate({
+            path: 'tasks',
+            match,
+            options: {
+                limit: parseInt(req.query.limit), //{{url}}/tasks?limit=3 //If limit is not provided , mongoose will ignore this option
+                skip: parseInt(req.query.skip),//{{url}}/tasks?limit=3&skip=2
+                //{{url}}/tasks?limit=2&skip=1 - it will skip 1 st record and shows 2 next records
+                sort
+                //     : {
+                //     createdAt: -1, //1 for ascending and -1 if descending
+                //     //completed:1 //all completed tasks will come then all incomplete ones will come
+                // }
+            }
+          }).execPopulate();
         res.send(req.user.tasks);
     } catch (e) {
         res.status(500).send(e)
     }
 })
+//{{url}}/tasks?sortBy=createdAt:asc&limit=1&skip=2
+//This get will work for sortings,paginations
+//Now this pagination gets applied when use want to see all rocords are completed and non completed records
+
 
 // router.get('/tasks/:id', async (req, res) => {
 //     const _id = req.params.id;

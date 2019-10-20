@@ -46,7 +46,12 @@ const userSchema = new mongoose.Schema({
             type: String,
             required: true
         }
-    }]
+    }],
+    avatar: {
+        type:Buffer
+    }
+}, {
+    timestamps:true
 })
 
 //this is setting up virtual relation from User to Task to find what are all the tasks associated with particular user.
@@ -89,6 +94,7 @@ userSchema.pre('remove', async function (next) {
     //So lets customise
     delete userObject.password;
     delete userObject.tokens;
+    delete userObject.avatar;
 
     return userObject
 }
@@ -96,7 +102,7 @@ userSchema.pre('remove', async function (next) {
 //userSchema.statics can be used for collection as a whole
 userSchema.methods.generateAuthToken = async function () {
     const user = this;
-    const token = jwt.sign({ _id: user._id.toString() }, 'cheemaks');
+    const token = jwt.sign({ _id: user._id.toString() },process.env.JWT_SECRETE);
     //console.log('at method',token);
     //store generated token and so as to store add one more field in Schema
     user.tokens = user.tokens.concat({ token });

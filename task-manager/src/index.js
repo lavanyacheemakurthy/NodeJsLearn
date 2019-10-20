@@ -9,7 +9,7 @@ const userRouter = require('./routers/user')
 const taskRouter = require('./routers/task')
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT //|| 3000;
 
 // app.use((req,res,next) => { //express middlware function
 //     //console.log(req.method,req.path);
@@ -363,9 +363,9 @@ Body:
 // }
 // console.log(JSON.stringify(pe));
 
-const Task = require('./models/task')
-const User = require('./models/user')
-const main = async () => {
+//const Task = require('./models/task')
+//const User = require('./models/user')
+//const main = async () => {
     //const task = await Task.findById('5d90512188298c2f7cd2387d');
     //console.log(task.owner); // this will print ID
     //await task.populate('owner').execPopulate();
@@ -375,15 +375,15 @@ const main = async () => {
     //Lets find it reverse - find tasks assocaiated with User
     //copy Owner ID from one task
    // const user = await User.findById('5d90505288298c2f7cd23879');
-   const user = await User.findById('5d904e8e56082e374830500c');
+   //const user = await User.findById('5d904e8e56082e374830500c');
     //console.log(user.tasks); //But we didnt keep this variable. //Undefined
     //Lets keep a relation from Users to tokens.
     //Keep a virtual property.Its a relation b/w 2 entities.It wont be stored in DB.
     //Set it User model
     
     //Now populate tasks
-    await user.populate('tasks').execPopulate(); 
-    console.log(user.tasks); //this wont be stored in DB but created virtually
+    //await user.populate('tasks').execPopulate(); 
+    //console.log(user.tasks); //this wont be stored in DB but created virtually
     //prints all tasks assocaited with User
     /*[ { completed: false,
     _id: 5d9050d388298c2f7cd2387b,
@@ -391,5 +391,94 @@ const main = async () => {
     owner: 5d90505288298c2f7cd23879,
     __v: 0 } ] */
     
+//}
+//main()
+
+
+const multer = require('multer')
+const upload = multer({
+    dest: 'images',
+    limits: {
+        //fileSize: 1000000 //1 MB
+        fileSize: 1000000, //1/2 MB
+    },
+    fileFilter(req, file, cb) {
+        //3 rd one is callback
+        //cb(new Error("File must be PDF"))
+        //cb(undefined,false/true)
+        console.log("file ", file)
+            //if (!file.originalname.endsWith(".pdf")) {
+        if(!file.originalname.match(/\.(doc|docx)$/)){
+                console.log("file ", file)
+               return cb(new Error("Please upload a word document.")) 
+            }
+            cb(undefined,true)
+        }
+    
+})
+// app.post('/upload', upload.single('upload'), (req, res) => {
+//     res.send({ uploaded: true })
+//     /* POST  localhost:3000/upload 
+//     Body: form - data
+//     Key : upload and file type.
+//     value : a file
+//     */
+//     //if file croesses file size we will get exception
+
+// })
+//Now lets do exception handling for multer upload.
+//Instead of upload.single('avtar') , lets use a function which throws an exception
+const errorMiddleware = (req, res, next) => {
+    throw new Error("From middleware custom")
 }
-main()
+// app.post('/upload', errorMiddleware, (req, res) => {
+    app.post('/upload', upload.single('upload'), (req, res) => {
+    //upload.single('upload') , registering middle ware to access with name upload from request.
+    //if we just upload with out extension , some random number is generated for name and its a  binary file.In VS code we cant see contents of it.
+    //so for file add .jpg from VS code to see image
+    res.send({ uploaded: true })
+    
+    //  POST  localhost:3000/upload 
+    // Body: form - data
+    // Key : upload and file type.
+    // value : a file
+    
+    //if file croesses file size we will get exception
+
+}, (error, req, res, next) => {
+    res.status(400).send({ error: error.message }) //this will make response to appear as JSON in postman
+})
+//But instead of function , lets use express way of doing it by adding an function with  (error, req, res, next) as arguments  in post
+//Lets do same in user router and switch back errorMiddleware to upload.single('avtar') .
+
+
+//node mailer - not working
+// const nodemailer = require('nodemailer');
+// async function main() {
+//     let testAcc = await nodemailer.createTestAccount();
+//     let transpoter = nodemailer.createTransport({
+//         host: 'gmail',
+//         //service:'gmail',
+//         //port: 587,
+//         //secure: false,
+//         auth: {
+//             user: 'lavanya061195@gmail.com',
+//             pass:'goodgirl.mp6'
+//         }
+//     })
+//     var mailOptions = {
+//         from: 'lavanya061195@gmail.com',
+//         to: 'lavanya061195@gmail.com',
+//         subject: 'Sending Test Email using Node.js',
+//         text: 'That was easy!',
+//         html:'<div><b><i>Be crazy</i></b></div>'
+//     };
+//     transporter.sendMail(mailOptions).then((res) => {
+//         console.log("Mail sent: " ,res)
+
+//     }).catch(err => {
+//         console.log("Sending mail failed: "+err);
+        
+//     })
+// }
+// main();

@@ -6,9 +6,9 @@ const auth = async (req, res, next) => {
     try {
         const token = req.header('Authorization').replace('Bearer ', '');
         //if we forget giving header from postman , it will go to catch block
-        const decode = jwt.verify(token, 'cheemaks')
+        const decode = jwt.verify(token, process.env.JWT_SECRETE)
         const user = await User.findOne({ _id: decode._id, 'tokens.token': token })
-        console.log({token,user});
+        //console.log({token,user});
         if (!user) {
             throw new Error()
         }

@@ -18,6 +18,7 @@ PS C:\Users\cheemaks\Learnings\NodeJs>
 
 >node mongodb.js
 >node src/db/mongoose.js
+>node src/index.js
 
 REST API:
 ---------
@@ -286,3 +287,457 @@ userSchema.pre('remove', async function (next) {
         await Task.deleteMany({ owner: user._id }) 
     next();
 })
+
+
+//Adding time stamps
+In user schema, mongoose.Schema , add 2 nd argument
+{
+        timestamps:true
+}
+With this create user as below:
+{
+	"name":"Lavanya Cheemakurthy",
+	"email":"lavanyach1@test.com",
+	"password":"lav@@1234",
+	"age":23
+}
+We will see in MongoDB , document is created with createdAt and updatedAt time stamps.
+Lets do same thing for tasks.
+taskSchema is not seperate as like in userSchema. So seperate it out and add timestamps argument to mongose schema.
+
+Now lets set up special options for consumers of tasks i.e GET tasks as it returns array and others will return single object.
+If there are multiple tasks for logged in user,then its retreival may take time
+
+In oue weather app , we have given url and 2 parameters.
+We are updating our URL in same way
+//GET /tasks?completed=true
+//Below has to work fro true , false and if nothing is given.So use req.query. Req.query.completed will return true or false as strings
+router.get('/tasks', auth, async (req, res) => {
+    const match = {};
+    if (req.query.completed) {
+        
+        match.completed = req.query.completed ==='true'
+    }
+    try {
+        await req.user.populate({
+            path: 'tasks',
+            match
+          }).execPopulate();
+        res.send(req.user.tasks);
+    } catch (e) {
+        res.status(500).send(e)
+    }
+})
+//Now above will work for
+//{ { url } } /tasks?completed=false
+//{ { url } } /tasks?completed=true
+//{ { url } } /tasks
+
+Pagination:
+limit and skip on GET endpoint
+Add this options: {
+                limit: parseInt(req.query.limit), //{{url}}/tasks?limit=3 //If limit is not provided , mongoose will ignore this option
+                skip: parseInt(req.query.skip),//{{url}}/tasks?limit=3&skip=2
+                //{{url}}/tasks?limit=2&skip=1 - it will skip 1 st record and shows 2 next records
+            }
+in poupulate method. 
+
+Sorting:
+if (req.query.sortBy) {
+        const parts = req.query.sortBy.split(':')
+        sort[parts[0]] = parts[1]==="desc" ? -1 :1
+    }
+in  options just pass sort object.
+
+File Uploads:
+Express by itself wont support file uploads.
+So lets explore npm module , npm multer or multipart/form-data.
+
+sample:
+----
+//npm install multer@1.4.2
+const multer = require('multer') //importing
+const upload = multer({
+    dest:'images'
+})
+app.post('/upload', upload.single('upload'), (req, res) => {
+    //upload.single('upload') , registering middle ware to access with name upload from request.
+    //if we just upload with out extension , some random number is generated for name and its a  binary file.In VS code we cant see contents of it.
+    //so for file add .jpg from VS code to see image
+    res.send({ uploaded: true })
+    
+    /* POST  localhost:3000/upload 
+    Body: form - data
+    Key : upload and file type.
+    value : a file
+    */
+
+})
+
+Now for users create a url to save avatar.
+const upload = multer({
+    dest : 'avatars'
+})
+try {
+    router.post('/users/me/avatart', upload.single('avatar'), (req, res) => {
+        res.send({ uploaded: true })
+    })
+} catch (exception) {
+    console.log("Exception occurred: "+e)
+}
+
+Validating file uploads:
+const upload = multer({
+    dest: 'images',
+    limits: {
+        //fileSize: 1000000 //1 MB
+        fileSize: 1000000, //1/2 MB
+    },
+    fileFilter(req, file, cb) {
+        //3 rd one is callback
+        //cb(new Error("File must be PDF"))
+        //cb(undefined,false/true)
+        console.log("file ", file)
+            //if (!file.originalname.endsWith(".pdf")) {
+        if(!file.originalname.match(/\.(doc|docx)$/)){
+                console.log("file ", file)
+               return cb(new Error("Please upload a word document.")) 
+            }
+            cb(undefined,true)
+        }
+    
+})
+exception handling in express:
+//Now lets do exception handling for multer upload.
+//Instead of upload.single('avtar') , lets use a function which throws an exception
+const errorMiddleware = (req, res, next) => {
+    throw new Error("From middleware custom")
+}
+app.post('/upload', errorMiddleware, (req, res) => {
+    //upload.single('upload') , registering middle ware to access with name upload from request.
+    //if we just upload with out extension , some random number is generated for name and its a  binary file.In VS code we cant see contents of it.
+    //so for file add .jpg from VS code to see image
+    res.send({ uploaded: true })
+    
+    /* POST  localhost:3000/upload 
+    Body: form - data
+    Key : upload and file type.
+    value : a file
+    */
+    //if file croesses file size we will get exception
+
+}, (error, req, res, next) => {
+    res.status(400).send({ error: error.message }) //this will make response to appear as JSON in postman
+})
+//But instead of function , lets use express way of doing it by adding an function with  (error, req, res, next) as arguments  in post
+//Lets do same in user router and switch back errorMiddleware to upload.single('avtar') .
+
+
+Till now upload image route is behind authentication.
+Lets do authentication to upload profile image and store the images in db instead of in local folder.
+
+In post call of upload image add auth middleware function as 2 nd argument.
+
+We will be adding a variable to user model to store image binary data.
+avatar: {
+        type:Buffer
+    }
+
+router.post('/users/me/avatart',auth,upload.single('avatar'), (req, res) => {
+    ....line 1
+}
+With above snippet in line 1,we wont have access to  file as multer middle ware runs first and saves file  in dest location and gives us response on to line 1.
+So remove dest property in object creation but just perform validation as is.
+And addreq.user.avatar = req.file.buffer;
+    await req.user.save();
+    in post upload image router.
+In JS BIN : 
+
+  <h1>test</h1>
+  <img src="data:image/jpg;base64,<copied buffer from ROBO 3t>"
+  THis tag says image source is not normal image,but data of form image/jpg which is in base 64/binary format and following is binary content.
+Try to see this binary, which will appear as image.
+
+//Now try to delete avatar previously uploaded
+
+//Serving up files
+//setting  up URL to visit from browser
+
+router.get('/users/:id/avatar', async (req,res) => {
+    try {
+        const user = await User.findById(req.params.id)
+        if (!user || !user.avatar) {
+            throw new Error();
+        }
+        res.set('Content-Type', 'image/jpg'); //Setting response type as image
+        res.send(user.avatar);
+        //http://localhost:3000/users/5d90e921914f5461b88def1b/avatar
+        
+    } catch (exception) {
+        res.status(404).send();
+    }
+})
+In js bin - html use 
+<img src="http://localhost:3000/users/5d90e921914f5461b88def1b/avatar">
+ and it will display image
+
+//Auto cropping and image formatting using npm module sharp
+
+Till now in toJSON method we are givving data which is having binary formated image too and sending this as part will slow down the process.
+So delete giving image as part of toJSON response.
+//This change is only for read profile
+userSchema.methods.toJSON = function () {
+    const user = this;
+        const userObject = user.toObject();
+        //console.log("aaaaaaaaaaaaa",userObject)
+    //mongoose will give just raw object
+    //So lets customise
+    delete userObject.password;
+    delete userObject.tokens;
+     delete userObject.avatar; //Add this
+}
+GET - {{url}}/users/me
+
+//no avatart:
+{
+    "_id": "5d90e921914f5461b88def1b",
+    "name": "Lavanya Cheemakurthy",
+    "email": "lavanyach1@test.com",
+    "age": 23,
+    "createdAt": "2019-09-29T17:25:53.374Z",
+    "updatedAt": "2019-10-15T05:47:37.964Z",
+    "__v": 4
+}
+
+Skipping sendGrid module for sending emails as it is free for one month.
+
+Env variables.
+-------
+
+in index.js there is const port = process.env.PORT || 3000;
+that means when deployed on server, hreoku will set port value into this variable.
+But y this? Beacuse it will be secure and it will be customizable
+In monggose.db file , we kept
+mongoose.connect('mongodb://127.0.0.1/task-manager-api',
+that means even on heroku it checks for local address which is wrong.
+But when working with Heroku we will set up a professional mongodb DB and will be using that on production.
+So for connection URL, url for development and production will be different
+Customization : So lets set up an environment variable and assign different when in development and in production.
+Security : we should be carefull when pushing somethings like access keys.
+
+And the access keys will be stored in environment variables file and it is not comitted to repository,so there will be 0 ways for wrong hands
+
+Now we have to provide own environmental variable for process.env.PORT when it runs locally,so no need to kepp 3000.
+Lets add a new folder (config) in taskmanager folder. And this contents of this folder will be ignored by git like node modules we did.
+In config folder , we will create dev.config file which will have key value pairs
+In this file dont add any etra spaces
+With this in index.js file no need to keep 3000 explicitly as heroku will set it to env variable anf the earlier step will do this for local.
+And also we have to sey our application that we are going to use env file.And this conguration is different for different OS.
+So we have to make use of a npm module (npm env-cmd) which will have cross OS compatability to do this.
+This module will help us to make environment variables defined in the file be available to node js application.
+npm i env-cmd@8.0.2 --save -dev
+THis is needed just for dev platform,not in production
+In package.json for dev script we have to say it to use env-cmd and provide path of it.
+"dev": "env-cmd ./config/dev.env nodemon src/index.js"
+If we change any environment variable we have to re run application
+Now we can see Server running on 3000 and 3000 is comming from pORT of dev.env from dev script having env-cmd module
+
+Now we have env variables defined locally , but if we push the project to heroku only PORT will exist
+Heroku does not set remaining env variables Automatically
+
+Creating a Production MongoDB Database:
+-------------------------------------
+We have to use a mongoDB service hosting service to get a DB up and running so that heroku can connect for running.
+Open browse:
+-----
+MongoDB Atlas - go to home page
+This is created by mongoDB org.
+It has free and paid tiers.
+Start free>Sign up form>yahoo mail and gmail paswd.Register in this.
+Get started for free. 
+Choose appropriatly and create a cluster(DB with mutliple servers) by leaving cloud provider to AWS and choose a near primary region
+supporting free tier and we can see it is 512MB and it is M0 plan.
+Tap Create a cluster and actual process takes some time and we will be navigated to sandboax / dashboard.
+Wait till cluster is created.
+
+Instance has been created.And there are some graphs about staticts of DB. As of now we didnt do any thing.
+
+Connect >Connect to Cluster0:
+1)Whitelist your connection IP.
+Add different IP : 0.0.0.0/0 - This is going to whitelist all the IP's, thats gonna be IP for local n/w and same will be IP for DB connecting from Heroku, as for heroku IP will be changing if we use one particular.
+Add IP.
+2)Create DB user . This is some one who is can connect to DB.Remember these details
+Username : lavanyachs
+password : atlas<ClusterNumber><UName> -> create MongoDB user.
+--> Choose a connection method - there will be 3 options.
+A)connect from Mongo Shell
+B)connect from  application
+C) connect from mongodb Compass
+C)mongodb Compass is offial MOngoDb GUI developed by MOngoDb org.
+
+Lets switch to Mongo DB Compass as Robo 3T cant connect to MongoDB Atlas DB's.
+Click on  C way.
+It will take us to Install Compass page.
+I)Select appropriate OS and downlaod.
+Once downloaded, lets connect to our localhost DB and other is MongoDB Atlas DB.
+II)Select I am using Compass 1.12 or later.
+Before that, install Compass exe and open application.
+Program name will be MongoDB Compass Community.
+Lets connect to local DB:
+.........
+Accept license agrrement if its first time.
+We will be on Connection to HOST page:
+Host name : localhost
+port :27017
+Favourite name : localhost mongodb Database
+Create it as favourite. Click Connect.
+It will get connected and we can see our local Mongo DB.
+We can see local task-manager-api as like in Robo 3T.
+Disconnect from this DB.
+
+Lets connect to Production DB:
+..................
+Again fill details.
+IN browser , in Atlas, we were seeing I am using Compass 1.12 or later and below it there will be connection URL.
+Just copy the host (after @ and before /admin).
+Paste it at Host name field.
+Turn on SRV record toggle.
+Authenticaion: username / paswd
+Give username we created when creating a user for Cluster.
+and give password earlier given for the user.
+Favourite name : Production mongodb database.
+Create as favourite . Click connect.
+Now we wont be able to see any data as in production we have not created or inserted any documents/collections.
+Now we have to check if we can connect to this from Compass or our application.
+Disconnect from this DB.
+SRV record is something which comes from DNS concept and its no where related Atlas or Compass.
+SRV record is what it connects the given hostname to correct IP address.
+
+Now we have a production ready DB and were able to connect to it using GUI tool Compass.
+
+Heroku deployement:
+When running on Heroku,app will be connecting to Production DB created earlier.
+Go to VS Code.
+Collapse all folders and editors ,just open dev.env file of config folder.
+Now lets initialise task-manager-app as as GIT repo.
+BASH>git init -Enter.
+Too many active chages as a warning.
+As we didnt ignore node module.
+BASH>git status.
+It ill show all folders.
+Here we have to do gitignore of node modules and config.
+If some one want to use our project they have to define there own values for keys in config file and this is how we avoid the application to fall into bad hands.
+Inf task-manager folder create .gitignore file.Add node_modules and  config
+Both of those will be grayed out at folder structure and wont be comitted to git.
+BASH>git status - we no longer see node modules or config. All these are in stagged stage 
+BASH>git add . - add all that are in stagged space.
+BASH>git commit -m "Initial Commit"
+Now we have to push this project to Github and heroku.
+We have to create a new repo in github.
+Create a private repo > Name : task-manager-api.
+click on Create a new repo
+Go to 3 rd way - Push an existing repo from cmd.
+Pase the cmd's one by one in VS code termina of task-manager-app.
+Refresh the page and we should be seeing some code insted of set up page.
+
+Now we have Git repo.Now we need Heroku repo.
+In dev.env file we added few env variables in which only PORT will be supplied by Heroku and others we have to set up on Heroku app.
+Lets create our new app on heroku  with an unique name across all heroku projects not only on your name.
+BASH>heroku create lavanyachs-task-manager.
+-created.
+We have URL to visit to view the application and git/repository remote which is already been set up for us.
+We now have origin remote to push our code to github and heroku remote to push code to Heroku.
+Before pushing code to heroku we have to set environmental variables.
+To set get and delete environment variables we have to use heroku config.
+BASH>heroku config:set key=value --app=lavanyachs-task-manager
+This will set a variable key with value  value and we can see all variables set for this too.
+BASH>heroku  config --app=lavanyachs-task-manager.
+Now to uset a environment variable key
+BASH>heroku config:unset key --app=lavanyachs-task-manager.
+Lets set our env variables.
+BASH/CMD>heroku config:set JWT_SECRET=RANDOM_NUM
+Now we have setted it.
+Now we have to set up MONGODB_URL.
+Now we need connection string provided by Atlas.
+Go to overview / dashboard page of Atlass and connect to Cluster  0 and this time select Connect from Application.
+Use short SRV connection > We will be able to see Connection URL and it wont give PSWD.We have to edit it .
+Replace Connection URL with proper password we have created for user of Cluster 0.
+If there are special char's in URL wrap it with double quotes if on Windows.
+BASH>heroku config:set MONGODB_URL="Updated url<mongodb+srv://lavanyachs:PSWD@cluster0-c7gfo.mongodb.net/<task__REPLACE_AS_FOLLOWING>task-manager-api?retryWrites=true&w=majority>" --app=lavanyachs-task-manager
+BASH>heroku config --app=lavanyachs-task-manager
+Make sure all environment variables in dev.env are shown except PORT as it is not custom one as like others.
+
+VS Code Terminal>git push heroku master. 
+Heroku remote was set up for us when we did heroku create.
+So this is going to get our code on to heroku servers and heroku will install all dependancies and build the application keep it running.
+For the first time , it will take time as all node modules have to be installed.From next time, less time to build as it will use from cach
+
+At last heroku will give URL which we can launch after building application.
+
+Copy the URL to clip board.
+Lets interact with Production version of task-manager app.
+
+In postman environments dropdown, we have set up {{url}} from dev but for prod we have to set it up now.
+Open up prod environment and enter any entry with key as url and value as what we copied and remove last /.
+
+Just give a try by hitting Read profile .It will give 401 unauthorise as we didnt create any user yet.
+Now lets go create a user in production environment
+POST - {{url}}/users
+BOdy:
+{
+	"name":"Lavanya Cheemakurthy",
+	"email":"chslavanya@yahoo.com",
+	"password":"lav1@Ch",
+	"age":23
+}
+And postman environment drop down set to prod.
+Click Send.Now we will be seeing a 201 Created response.
+Try to fire of Read profile and we should be able to see production user details we saved earlier.
+
+That means we are able to read and write from production DB.
+Lets got to Compass and connect to Production. We should be able to see our new task-manager-api DB.
+open it and check if the data is what we sent from postman.
+Lets create a task in association with created user.
+POST: {{url}}/tasks
+{
+"description":"Store in Production database",
+"completed":true
+}
+Click save.
+
+Lets check in GUI - Compass.
+Refresh the server and we will be able to see tasks collection created with one document in it.
+
+Now we have a production version of TASK-MANAGER-API application.
+
+
+Setting Automated testing for Node JS application:
+-------------
+
+
+
+
+
+
+Conenctiong URL to connect from application:
+mongodb+srv://lavanyachs:PSWD@cluster0-c7gfo.mongodb.net/test?retryWrites=true&w=majority
+In this url its given as test change the document name to lavanyschs-task-manager
+cmd:
+heroku config --app=lavanyachs-task-manager
+
+heroku config:unset MONGODB_URL --app=lavanyachs-task-m
+anager
+
+heroku config:set MONGODB_URL="mongodb+srv://lavanyachs:PSWD@cluster0-c7gfo.mongodb.net/task-manager-api?retryWrites=true&w=majority" --app=lavanyachs-task-manager
+
+cinfigured variables from heroku>settings>add key values.
+git push heroku master
+
+Heroku built url is :
+https://lavanyachs-task-manager.herokuapp.com/
+
+Git repo used by heroku :
+https://git.heroku.com/lavanyachs-task-manager.git
+Go to postman : set up Task Manager Prod environment.
+Create user and read profile.
+Create a task for user and check in MongoDB compass.

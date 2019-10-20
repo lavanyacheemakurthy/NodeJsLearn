@@ -2,7 +2,8 @@ const express = require('express');
 const User = require('../models/user')
 const auth = require('../middleware/auth')
 const router = new express.Router();
-
+const multer = require('multer')
+const sharp = require('sharp');
 // router.get('/test', (req, res) => {
 //     res.send("From a new file")
 // }) //http://localhost:3000/test
@@ -230,5 +231,100 @@ router.post('/users/logoutAll', auth, async (req, res) => {
     }
 })
 
+//posting avatars
+// const upload = multer({
+//     dest: 'avatars',
+//     limits: {
+//         fileSize: 1000000,
+//     },
+//     fileFilter(req, file, cb) {
+//         if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+//             return cb(new Error("Please upload an image."))
+//         }
+//         cb(undefined,true)
+//     }
+// })
+const upload = multer({
+    //dest: 'avatars',
+    limits: {
+        fileSize: 1000000,
+    },
+    fileFilter(req, file, cb) {
+        if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+            return cb(new Error("Please upload an image."))
+        }
+        cb(undefined,true)
+    }
+})
+
+// router.post('/users/me/avatart', upload.single('avatar'), (req, res) => {
+//         res.send({ uploaded: true })
+//     })
+//Now lets do exception handling for multer upload.
+//Instead of upload.single('avtar') , lets use a function which throws an exception
+// const errorMiddleware = (req, res, next) => {
+//     throw new Error("From middleware custom")
+// }
+// router.post('/users/me/avatart',errorMiddleware , (req, res) => {
+//     res.send({ uploaded: true })
+// })
+//But instead of function , lets use express way of doing it by adding an function with  (error, req, res, next) as arguments  in post
+// const errorMiddleware = (req, res, next) => {
+//     throw new Error("From middleware custom")
+// }
+
+// router.post('/users/me/avatart', auth, upload.single('avatar'), (req, res) => {
+//     res.send({ uploaded: true })
+// }, (error, req, res, next) => {
+//     console.log("in 2nd block from post")
+//     res.status(400).send({ error: error.message })
+// }
+// )
+
+router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => {
+            //We should be able to access file here.
+            // multer middle ware runs first and saves file  in dest location and gives us response
+            //So remove dest property in object creation but just perform validation as is.
+            //now req.file.buffer will have data related to binary of file
+        // console.log(req.file); //binary format data
+    const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer()
+            //req.user.avatar = req.file.buffer;
+            //This is to maintain all profile pics as same size
+    req.user.avatar = buffer;
+    console.log("about to save buffer")
+   await req.user.save();
+    //res.send();
+    res.send({ avatarUploaded: "Success" }) 
+    //go to robo 3t and check if image binary is saved under avatar property
+    
+
+}, (error, req, res, next) => {
+    console.log("in 2nd block from post")
+    res.status(400).send({ error: error.message })
+}
+)
+
+router.delete('/users/me/avatar', auth, async (req, res) => {
+    req.user.avatar = undefined;
+    await req.user.save();
+    res.send({avatarDeleted:"Success"})
+})
+
+router.get('/users/:id/avatar', async (req,res) => {
+    try {
+        const user = await User.findById(req.params.id)
+        if (!user || !user.avatar) {
+            throw new Error();
+        }
+        console.log("user details :" ,user)
+        //res.set('Content-Type', 'image/jpg'); //Setting response type as image
+        res.set('Content-Type', 'image/png');
+        res.send(user.avatar);
+        //http://localhost:3000/users/5d90e921914f5461b88def1b/avatar
+        //in html use <img src="http://localhost:3000/users/5d90e921914f5461b88def1b/avatar"> and it will displayy image
+    } catch (exception) {
+        res.status(404).send();
+    }
+})
 
 module.exports = router;
