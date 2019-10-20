@@ -1,0 +1,479 @@
+{
+	"variables": [],
+	"info": {
+		"name": "NodeJs Learning - Lav - Tasks App",
+		"_postman_id": "16f99730-5c39-9d44-1004-7ef73a004d99",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"if(pm.response.code===201){",
+							"    pm.environment.set('authToken',pm.response.json().token)",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\":\"Sireesha Cheemakurthy\",\n\t\"email\":\"sireeshaCh1@test.com\",\n\t\"password\":\"siri@@1234\",\n\t\"age\":25\n}"
+				},
+				"url": "{{url}}/users",
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Create User - Prod",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"if(pm.response.code===201){",
+							"    pm.environment.set('authToken',pm.response.json().token)",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\":\"Lavanya Cheemakurthy\",\n\t\"email\":\"chslavanya@yahoo.com\",\n\t\"password\":\"lav1@Ch\",\n\t\"age\":23\n}"
+				},
+				"url": "{{url}}/users",
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Login User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"if(pm.response.code===200){",
+							"    pm.environment.set('authToken',pm.response.json().token)",
+							"}"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\":\"lavanyach1@test.com\",\n\t\"password\":\"lav@@1234\"\n}"
+				},
+				"url": "{{url}}/users/login",
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Create task",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{authToken}}"
+					}
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"description\":\"Siri has to get up early morning\"\n}"
+				},
+				"url": "{{url}}/tasks",
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Read Users - req updated to read profile",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{authToken}}"
+					}
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZDc0ZDg2NzExOWY0NjQ1MDBkN2UzMTkiLCJpYXQiOjE1Njc5NDA2NjR9.hqy5icJVSNKTzoKbiAMjeDA97RY3lzKJ2EI4YhidKm8"
+					}
+				],
+				"body": {},
+				"url": "{{url}}/users",
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Read Profile",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{authToken}}"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": "{{url}}/users/me",
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Read Profile - Prod",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{authToken}}"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": "{{url}}/users/me",
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Read tasks",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"//{{url}}/tasks?limit=2&skip=1"
+						]
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{authToken}}"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{url}}/tasks?sortBy=createdAt:asc&limit=1&skip=2",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"tasks"
+					],
+					"query": [
+						{
+							"key": "sortBy",
+							"value": "createdAt:asc",
+							"equals": true
+						},
+						{
+							"key": "limit",
+							"value": "1",
+							"equals": true
+						},
+						{
+							"key": "skip",
+							"value": "2",
+							"equals": true
+						}
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Read user",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{authToken}}"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": "{{url}}/users/5d582a4cf85f6d383cd8f6ad",
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Read task",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{authToken}}"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": "{{url}}/tasks/5d90da1eebad5229bc7a9c36",
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Update User",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{authToken}}"
+					}
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\" : \"Lavanya11\",\n\t\"password\":\"Test@11\",\n\t\"age\":\"15\"\n}"
+				},
+				"url": "{{url}}/users/me",
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Update task",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{authToken}}"
+					}
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"completed\":\"true\"\n}"
+				},
+				"url": "{{url}}/tasks/5d905cf969757d0fd00b2a30",
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{authToken}}"
+					}
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"url": "{{url}}/users/me",
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Task",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{authToken}}"
+					}
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"url": "{{url}}/tasks/5d9199273f36b46eb441c0f9",
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Logout User",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{authToken}}"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"url": "{{url}}/users/logout",
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Logout User From All Sessions",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{authToken}}"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {},
+				"url": "{{url}}/users/logoutAll",
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "sample image upload using Multer NPM",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "upload",
+							"description": "",
+							"type": "file",
+							"src": "sample-doc-file.docx"
+						}
+					]
+				},
+				"url": "localhost:3000/upload",
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Upload Avatar",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{authToken}}"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "avatar",
+							"description": "",
+							"type": "file",
+							"src": "profilepic.jpg"
+						}
+					]
+				},
+				"url": "{{url}}/users/me/avatar",
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Avatar",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{authToken}}"
+					}
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"url": "{{url}}/users/me/avatar",
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Sample Multer Upload",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "upload",
+							"value": "",
+							"description": "",
+							"type": "file"
+						}
+					]
+				},
+				"url": "localhost:3000/upload",
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

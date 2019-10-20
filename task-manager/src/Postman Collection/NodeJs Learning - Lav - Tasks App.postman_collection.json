@@ -1,0 +1,607 @@
+{
+	"id": "16f99730-5c39-9d44-1004-7ef73a004d99",
+	"name": "NodeJs Learning - Lav - Tasks App",
+	"description": "",
+	"order": [
+		"8eb7b23d-56ea-7fa2-f652-ec4646a51001",
+		"a7e6346e-c819-a378-1b58-b3d856773eec",
+		"7b8c4c05-7de9-c3c2-f982-6f25c79d7fc4",
+		"28069338-5de9-fa3b-0f84-a6e1c74da598",
+		"8eede878-d6a5-e1bf-b64e-a7ecacee1aaf",
+		"8fb27e8c-76d6-4464-bd4d-c3f35242e69b",
+		"9def92d4-3ab0-d091-6ff4-16aa7326af56",
+		"eb60445f-8349-67e3-d0be-0be809a5e167",
+		"128b8416-0ce9-dc6a-30d3-d72a4fae0ca8",
+		"e6500bbb-388e-67f4-b2e3-508eae5cafc9",
+		"c6e65a1d-b095-c751-72e0-fb4894c5590f",
+		"c3563abe-19b1-b9c8-d228-c698c3fb5f1a",
+		"e6a65a65-e2a7-0c5f-909b-e15ef19028d9",
+		"05c7afc6-10a8-728c-61b5-08a6e0be14e5",
+		"1186ce26-d08d-b925-ae97-ec7d30c761f9",
+		"8f3e23e4-720c-3b1c-a419-073aa39cdea3",
+		"84f76bb9-13df-838b-0649-d11b5ed4f354",
+		"0bc4223b-d870-bb49-0752-2b34f6f23634",
+		"d4f2179f-ab7b-13bf-bffc-8cb34b872971",
+		"5d7033c0-cebe-5c78-8c41-11e142bce975"
+	],
+	"folders": [],
+	"folders_order": [],
+	"timestamp": 1566063960808,
+	"owner": 0,
+	"public": false,
+	"requests": [
+		{
+			"id": "05c7afc6-10a8-728c-61b5-08a6e0be14e5",
+			"headers": "",
+			"headerData": [],
+			"url": "{{url}}/tasks/5d9199273f36b46eb441c0f9",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "DELETE",
+			"data": null,
+			"dataMode": "params",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "bearerAuth",
+			"helperAttributes": {
+				"token": "{{authToken}}"
+			},
+			"time": 1569824304771,
+			"name": "Delete Task",
+			"description": "",
+			"collectionId": "16f99730-5c39-9d44-1004-7ef73a004d99",
+			"responses": []
+		},
+		{
+			"id": "0bc4223b-d870-bb49-0752-2b34f6f23634",
+			"headers": "",
+			"headerData": [],
+			"url": "{{url}}/users/me/avatar",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [
+				{
+					"key": "avatar",
+					"value": "profilepic.jpg",
+					"description": "",
+					"type": "file",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "bearerAuth",
+			"helperAttributes": {
+				"token": "{{authToken}}"
+			},
+			"time": 1571208502685,
+			"name": "Upload Avatar",
+			"description": "",
+			"collectionId": "16f99730-5c39-9d44-1004-7ef73a004d99",
+			"responses": []
+		},
+		{
+			"id": "1186ce26-d08d-b925-ae97-ec7d30c761f9",
+			"headers": "",
+			"headerData": [],
+			"url": "{{url}}/users/logout",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": null,
+			"dataMode": "params",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "bearerAuth",
+			"helperAttributes": {
+				"token": "{{authToken}}"
+			},
+			"time": 1569506564739,
+			"name": "Logout User",
+			"description": "",
+			"collectionId": "16f99730-5c39-9d44-1004-7ef73a004d99",
+			"responses": []
+		},
+		{
+			"id": "128b8416-0ce9-dc6a-30d3-d72a4fae0ca8",
+			"headers": "",
+			"headerData": [],
+			"url": "{{url}}/users/5d582a4cf85f6d383cd8f6ad",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": null,
+			"dataMode": "params",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "bearerAuth",
+			"helperAttributes": {
+				"token": "{{authToken}}"
+			},
+			"time": 1567944452457,
+			"name": "Read user",
+			"description": "",
+			"collectionId": "16f99730-5c39-9d44-1004-7ef73a004d99",
+			"responses": []
+		},
+		{
+			"id": "28069338-5de9-fa3b-0f84-a6e1c74da598",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{url}}/tasks",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "bearerAuth",
+			"helperAttributes": {
+				"token": "{{authToken}}"
+			},
+			"time": 1569774181327,
+			"name": "Create task",
+			"description": "",
+			"collectionId": "16f99730-5c39-9d44-1004-7ef73a004d99",
+			"responses": [],
+			"rawModeData": "{\n\"description\":\"Siri has to get up early morning\"\n}"
+		},
+		{
+			"id": "5d7033c0-cebe-5c78-8c41-11e142bce975",
+			"headers": "",
+			"headerData": [],
+			"url": "localhost:3000/upload",
+			"queryParams": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "POST",
+			"collectionId": "16f99730-5c39-9d44-1004-7ef73a004d99",
+			"data": [
+				{
+					"key": "upload",
+					"value": "",
+					"description": "",
+					"type": "file",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"name": "Sample Multer Upload",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1571117984804,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "7b8c4c05-7de9-c3c2-f982-6f25c79d7fc4",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{url}}/users/login",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": "if(pm.response.code===200){\n    pm.environment.set('authToken',pm.response.json().token)\n}",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1569824306972,
+			"name": "Login User",
+			"description": "",
+			"collectionId": "16f99730-5c39-9d44-1004-7ef73a004d99",
+			"responses": [],
+			"rawModeData": "{\n\t\"email\":\"lavanyach1@test.com\",\n\t\"password\":\"lav@@1234\"\n}"
+		},
+		{
+			"id": "84f76bb9-13df-838b-0649-d11b5ed4f354",
+			"headers": "",
+			"headerData": [],
+			"url": "localhost:3000/upload",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [
+				{
+					"key": "upload",
+					"value": "sample-doc-file.docx",
+					"description": "",
+					"type": "file",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1570452107437,
+			"name": "sample image upload using Multer NPM",
+			"description": "",
+			"collectionId": "16f99730-5c39-9d44-1004-7ef73a004d99",
+			"responses": []
+		},
+		{
+			"id": "8eb7b23d-56ea-7fa2-f652-ec4646a51001",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{url}}/users",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": "if(pm.response.code===201){\n    pm.environment.set('authToken',pm.response.json().token)\n}",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1571417357776,
+			"name": "Create User",
+			"description": "",
+			"collectionId": "16f99730-5c39-9d44-1004-7ef73a004d99",
+			"responses": [],
+			"rawModeData": "{\n\t\"name\":\"Sireesha Cheemakurthy\",\n\t\"email\":\"sireeshaCh1@test.com\",\n\t\"password\":\"siri@@1234\",\n\t\"age\":25\n}"
+		},
+		{
+			"id": "8eede878-d6a5-e1bf-b64e-a7ecacee1aaf",
+			"headers": "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZDc0ZDg2NzExOWY0NjQ1MDBkN2UzMTkiLCJpYXQiOjE1Njc5NDA2NjR9.hqy5icJVSNKTzoKbiAMjeDA97RY3lzKJ2EI4YhidKm8\n",
+			"headerData": [
+				{
+					"key": "Authorization",
+					"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZDc0ZDg2NzExOWY0NjQ1MDBkN2UzMTkiLCJpYXQiOjE1Njc5NDA2NjR9.hqy5icJVSNKTzoKbiAMjeDA97RY3lzKJ2EI4YhidKm8",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{url}}/users",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": null,
+			"dataMode": "params",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "bearerAuth",
+			"helperAttributes": {
+				"token": "{{authToken}}"
+			},
+			"time": 1567944432840,
+			"name": "Read Users - req updated to read profile",
+			"description": "",
+			"collectionId": "16f99730-5c39-9d44-1004-7ef73a004d99",
+			"responses": []
+		},
+		{
+			"id": "8f3e23e4-720c-3b1c-a419-073aa39cdea3",
+			"headers": "",
+			"headerData": [],
+			"url": "{{url}}/users/logoutAll",
+			"queryParams": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "POST",
+			"collectionId": "16f99730-5c39-9d44-1004-7ef73a004d99",
+			"data": null,
+			"dataMode": "params",
+			"name": "Logout User From All Sessions",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1569506627376,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "bearerAuth",
+			"helperAttributes": {
+				"token": "{{authToken}}"
+			}
+		},
+		{
+			"id": "8fb27e8c-76d6-4464-bd4d-c3f35242e69b",
+			"headers": "",
+			"headerData": [],
+			"url": "{{url}}/users/me",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": null,
+			"dataMode": "params",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "bearerAuth",
+			"helperAttributes": {
+				"token": "{{authToken}}"
+			},
+			"time": 1571208500434,
+			"name": "Read Profile",
+			"description": "",
+			"collectionId": "16f99730-5c39-9d44-1004-7ef73a004d99",
+			"responses": []
+		},
+		{
+			"id": "9def92d4-3ab0-d091-6ff4-16aa7326af56",
+			"headers": "",
+			"headerData": [],
+			"url": "{{url}}/users/me",
+			"queryParams": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "GET",
+			"collectionId": "16f99730-5c39-9d44-1004-7ef73a004d99",
+			"data": null,
+			"dataMode": "params",
+			"name": "Read Profile - Prod",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1571564480330,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "bearerAuth",
+			"helperAttributes": {
+				"token": "{{authToken}}"
+			}
+		},
+		{
+			"id": "a7e6346e-c819-a378-1b58-b3d856773eec",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{url}}/users",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": "if(pm.response.code===201){\n    pm.environment.set('authToken',pm.response.json().token)\n}",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1571564870583,
+			"name": "Create User - Prod",
+			"description": "",
+			"collectionId": "16f99730-5c39-9d44-1004-7ef73a004d99",
+			"responses": [],
+			"rawModeData": "{\n\t\"name\":\"Lavanya Cheemakurthy\",\n\t\"email\":\"chslavanya@yahoo.com\",\n\t\"password\":\"lav1@Ch\",\n\t\"age\":23\n}"
+		},
+		{
+			"id": "c3563abe-19b1-b9c8-d228-c698c3fb5f1a",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{url}}/tasks/5d905cf969757d0fd00b2a30",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "PATCH",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "bearerAuth",
+			"helperAttributes": {
+				"token": "{{authToken}}"
+			},
+			"time": 1569824303040,
+			"name": "Update task",
+			"description": "",
+			"collectionId": "16f99730-5c39-9d44-1004-7ef73a004d99",
+			"responses": [],
+			"rawModeData": "{\n\t\"completed\":\"true\"\n}"
+		},
+		{
+			"id": "c6e65a1d-b095-c751-72e0-fb4894c5590f",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "{{url}}/users/me",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "PATCH",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "bearerAuth",
+			"helperAttributes": {
+				"token": "{{authToken}}"
+			},
+			"time": 1569509861879,
+			"name": "Update User",
+			"description": "",
+			"collectionId": "16f99730-5c39-9d44-1004-7ef73a004d99",
+			"responses": [],
+			"rawModeData": "{\n\t\"name\" : \"Lavanya11\",\n\t\"password\":\"Test@11\",\n\t\"age\":\"15\"\n}"
+		},
+		{
+			"id": "d4f2179f-ab7b-13bf-bffc-8cb34b872971",
+			"headers": "",
+			"headerData": [],
+			"url": "{{url}}/users/me/avatar",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "DELETE",
+			"data": null,
+			"dataMode": "params",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "bearerAuth",
+			"helperAttributes": {
+				"token": "{{authToken}}"
+			},
+			"time": 1570471138563,
+			"name": "Delete Avatar",
+			"description": "",
+			"collectionId": "16f99730-5c39-9d44-1004-7ef73a004d99",
+			"responses": []
+		},
+		{
+			"id": "e6500bbb-388e-67f4-b2e3-508eae5cafc9",
+			"headers": "",
+			"headerData": [],
+			"url": "{{url}}/tasks/5d90da1eebad5229bc7a9c36",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": null,
+			"dataMode": "params",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "bearerAuth",
+			"helperAttributes": {
+				"token": "{{authToken}}"
+			},
+			"time": 1569824301113,
+			"name": "Read task",
+			"description": "",
+			"collectionId": "16f99730-5c39-9d44-1004-7ef73a004d99",
+			"responses": []
+		},
+		{
+			"id": "e6a65a65-e2a7-0c5f-909b-e15ef19028d9",
+			"headers": "",
+			"headerData": [],
+			"url": "{{url}}/users/me",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "DELETE",
+			"data": null,
+			"dataMode": "params",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "bearerAuth",
+			"helperAttributes": {
+				"token": "{{authToken}}"
+			},
+			"time": 1569509067926,
+			"name": "Delete User",
+			"description": "",
+			"collectionId": "16f99730-5c39-9d44-1004-7ef73a004d99",
+			"responses": []
+		},
+		{
+			"id": "eb60445f-8349-67e3-d0be-0be809a5e167",
+			"headers": "",
+			"headerData": [],
+			"url": "{{url}}/tasks?sortBy=createdAt:asc&limit=1&skip=2",
+			"queryParams": [
+				{
+					"key": "sortBy",
+					"value": "createdAt:asc",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "limit",
+					"value": "1",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "skip",
+					"value": "2",
+					"equals": true,
+					"description": "",
+					"enabled": true
+				}
+			],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "GET",
+			"data": null,
+			"dataMode": "params",
+			"version": 2,
+			"tests": "//{{url}}/tasks?limit=2&skip=1",
+			"currentHelper": "bearerAuth",
+			"helperAttributes": {
+				"token": "{{authToken}}"
+			},
+			"time": 1570430425484,
+			"name": "Read tasks",
+			"description": "",
+			"collectionId": "16f99730-5c39-9d44-1004-7ef73a004d99",
+			"responses": []
+		}
+	]
+}
