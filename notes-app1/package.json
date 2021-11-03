@@ -11,7 +11,7 @@
   "dependencies": {
     "chalk": "^2.4.1",
     "enumeration": "^0.1.2",
-    "validator": "^10.11.0",
+    "validator": "^13.7.0",
     "yargs": "^13.2.2"
   }
 }
